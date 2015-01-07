@@ -2,11 +2,11 @@
 from collections import namedtuple
 import unittest
 
-from annotator.auth import TokenInvalid
 from mock import patch
+from jwt import DecodeError
 from pyramid.testing import DummyRequest
 
-from h.authorization import RequestValidator
+from h.authorization import RequestValidator, now, posix_seconds
 from h.security import WEB_SCOPES
 
 FakeClient = namedtuple('FakeClient', ['client_id', 'client_secret'])
@@ -30,7 +30,7 @@ class TestRequestValidator(unittest.TestCase):
         self.request.registry.web_client = self.client
         self.validator = RequestValidator()
 
-        self.decode_patcher = patch('annotator.auth.decode_token')
+        self.decode_patcher = patch('jwt.decode')
         self.decode = self.decode_patcher.start()
 
     def test_authenticate_client_ok(self):
@@ -58,18 +58,76 @@ class TestRequestValidator(unittest.TestCase):
         res = self.validator.authenticate_client(self.request)
         assert res is False
 
+    def test_validate_bearer_token_expired(self):
+        self.decode.return_value = {
+            'aud': self.request.host_url,
+            'sub': 'citizen',
+            'exp': posix_seconds(now()) - 300,
+            'iss': self.client.client_id,
+        }
+        res = self.validator.validate_bearer_token('', [], self.request)
+        assert res is False
+
+    def test_validate_bearer_token_future(self):
+        self.decode.return_value = {
+            'aud': self.request.host_url,
+            'sub': 'citizen',
+            'exp': posix_seconds(now()) + 3600,
+            'nbf': posix_seconds(now()) + 1800,
+            'iss': self.client.client_id,
+        }
+        res = self.validator.validate_bearer_token('', [], self.request)
+        assert res is False
+
+    def test_validate_bearer_token_no_subject(self):
+        self.decode.return_value = {
+            'aud': self.request.host_url,
+            'exp': posix_seconds(now()) + 3600,
+            'iss': self.client.client_id,
+        }
+        res = self.validator.validate_bearer_token('', [], self.request)
+        assert res is False
+
+    def test_validate_bearer_token_bad_issuer(self):
+        self.decode.return_value = {
+            'aud': self.request.host_url,
+            'sub': 'citizen',
+            'exp': posix_seconds(now()) + 3600,
+            'iss': 'bogus',
+        }
+        res = self.validator.validate_bearer_token('', [], self.request)
+        assert res is False
+
     def test_validate_bearer_token_invalid(self):
-        self.decode.side_effect = TokenInvalid
+        self.decode.side_effect = DecodeError
         res = self.validator.validate_bearer_token('', [], self.request)
         assert res is False
 
     def test_validate_bearer_token_valid(self):
-        self.decode.return_value = {'userId': 'citizen', 'scopes': ['world']}
+        self.decode.return_value = {
+            'aud': self.request.host_url,
+            'sub': 'citizen',
+            'exp': posix_seconds(now()) + 30,
+            'iss': self.client.client_id,
+        }
         res = self.validator.validate_bearer_token('', [], self.request)
         assert res is True
         assert self.request.client is self.client
+        assert self.request.scopes == WEB_SCOPES
         assert self.request.user == 'citizen'
-        assert self.request.scopes == ['world']
+
+    def test_validate_annotator_token_valid(self):
+        self.decode.return_value = {
+            'consumerKey': self.client.client_id,
+            'userId': 'citizen',
+            'ttl': 30,
+            'issuedAt': now().isoformat(),
+        }
+        res = self.validator.validate_bearer_token('', [], self.request)
+        assert res is True
+        assert self.request.client is self.client
+        assert self.request.scopes == WEB_SCOPES
+        assert self.request.user == 'citizen'
 
     def test_validate_scopes_ok(self):
         client = FakeClient('other', 'secret')
