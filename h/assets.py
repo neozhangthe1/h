@@ -1,8 +1,28 @@
 # -*- coding: utf-8 -*-
+from __future__ import with_statement
 import re
 
 from deform.field import Field
+from webassets.filter import (ExternalTool, register_filter)
+from webassets.utils import working_directory
 import pyramid
+
+
+class BrowserifyFilter(ExternalTool):
+    name = 'browserify'
+    options = {'binary': 'BROWSERIFY_BIN'}
+    max_debug_level = None
+
+    def input(self, in_, out, source_path, **kwargs):
+        args = [self.binary or 'browserify']
+        args.append('--transform=coffeeify')
+        args.append('--extension=.coffee')
+        args.append('-')
+        with working_directory(filename=source_path):
+            self.subprocess(args, out, in_)
+
+
+register_filter(BrowserifyFilter)
 
 
 class WebassetsResourceRegistry(object):
