@@ -5,6 +5,7 @@
   "description": "The Internet, peer reviewed.",
   "dependencies": {
     "browserify": "^8.1.0",
+    "browserify-shim": "^3.8.2",
     "clean-css": "2.2.2",
     "coffee-script": "1.7.1",
     "coffeeify": "^1.0.0",
@@ -34,5 +35,33 @@
   "bugs": {
     "url": "https://github.com/hypothesis/h/issues"
   },
-  "homepage": "https://github.com/hypothesis/h"
+  "homepage": "https://github.com/hypothesis/h",
+  "browserify": {
+    "transform": ["coffeeify", "browserify-shim"]
+  },
+  "browser": {
+    "annotator": "./h/static/scripts/vendor/annotator.js",
+    "jquery": "./h/static/scripts/vendor/jquery.js"
+  },
+  "browserify-shim": {
+    "jquery": "global:jQuery",
+    "annotator": {
+      "exports": "this.Annotator",
+      "depends": [
+        "jquery",
+        "./h/static/scripts/vendor/jquery.scrollintoview.js"
+      ]
+    },
+    "./h/static/scripts/vendor/jschannel.js": "Channel",
+    "./h/static/scripts/vendor/annotator.pdf.js": {
+      "depends": [
+        "./h/static/scripts/vendor/page_text_mapper_core.js"
+      ]
+    },
+    "./h/static/scripts/vendor/annotator.fuzzytextanchors.js": {
+      "depends": [
+        "./h/static/scripts/vendor/dom_text_matcher.js"
+      ]
+    }
+  }
 }
