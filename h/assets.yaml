@@ -322,23 +322,42 @@ inject:
     - inject_css
     - inject_js
 
-inject_js:
-  output: scripts/hypothesis.min.js
-  contents:
-    - jquery
-    - jquery_scrollintoview
-    - jschannel
-    - annotator
-    - annotator_plugins_inject
-    - filters: uglifyjs
-      contents:
-        - filters: coffeescript
-          output: scripts/hypothesis.js
-          contents:
-            - h:static/scripts/guest.coffee
-            - h:static/scripts/host.coffee
-        - h:static/bootstrap.js
+# inject_js:
+#   output: scripts/hypothesis.min.js
+#   contents:
+#     - jquery
+#     - jquery_scrollintoview
+#     - jschannel
+#     - gettext
+#     - annotator
+#     - annotator_bridge
+#     - annotator_bucket_bar
+#     - annotator_document
+#     - annotator_fuzzytextanchors
+#     - annotator_textrange
+#     - annotator_textposition
+#     - annotator_textquote
+#     - annotator_texthighlights
+#     - annotator_pdf
+#     - annotator_toolbar
+#     - filters: uglifyjs
+#       contents:
+#         - filters: coffeescript
+#           output: scripts/hypothesis.js
+#           contents:
+#             - h:static/scripts/guest.coffee
+#             - h:static/scripts/host.coffee
+#         - h:static/bootstrap.js
 
+inject_js:
+  contents:
+  - jquery
+  - output: scripts/hypothesis.min.js
+    filters: browserify
+    contents: h:static/bootstrap.js
+    depends:
+      - h:static/scripts/**/*.js
+      - h:static/scripts/**/*.coffee
 
 inject_css:
   output: styles/hypothesis.min.css
