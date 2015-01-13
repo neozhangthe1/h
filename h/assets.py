@@ -17,7 +17,7 @@ class BrowserifyFilter(ExternalTool):
         args = [self.binary or 'browserify']
         args.append('--extension=.coffee')
 
-        if self.env.debug is True:
+        if self.get_config('debug') is True:
             args.append('--debug')
 
         args.append('-')
