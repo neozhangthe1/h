@@ -1,8 +1,22 @@
-Annotator = @Annotator
-$ = Annotator.$
+$ = require('jquery')
+Annotator = require('annotator')
+Channel = require('./vendor/jschannel')
+
+# Include Annotator Plugins
+require('./vendor/annotator.pdf')
+require('./vendor/annotator.document')
+require('./vendor/annotator.textanchors')
+require('./vendor/annotator.fuzzytextanchors')
+require('./vendor/annotator.textrange')
+require('./vendor/annotator.textposition')
+require('./vendor/annotator.textquote')
+require('./vendor/annotator.texthighlights')
+require('./plugin/bridge')
+require('./plugin/toolbar')
+require('./plugin/bucket-bar')
 
 
-class Annotator.Guest extends Annotator
+module.exports = class Annotator.Guest extends Annotator
   SHOW_HIGHLIGHTS_CLASS = 'annotator-highlights-always-on'
 
   # Events to be bound on Annotator#element.

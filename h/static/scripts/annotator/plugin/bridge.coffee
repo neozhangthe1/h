@@ -1,4 +1,11 @@
-$ = Annotator.$
+if typeof require == 'function'
+  $ = require('jquery')
+  Annotator = require('annotator')
+  Channel = require('../vendor/jschannel')
+else
+  Channel = window.Channel
+  Annotator = window.Annotator
+  $ = Annotator.$
 
 class Annotator.Plugin.Bridge extends Annotator.Plugin
   # These events maintain the awareness of annotations between the two
