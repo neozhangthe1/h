@@ -8,7 +8,6 @@ class AppController
      $document,   $location,   $route,   $scope,   $window,
      annotator,   auth,   drafts,   identity,
      permissions,   streamer,   streamfilter,
-
   ) ->
     {plugins, host, providers} = annotator
 
@@ -47,7 +46,7 @@ class AppController
           annotator.publish 'annotationDeleted', container.message
           drafts.remove annotation
         # Remove annotations the user is not authorized to view.
-        else if not permissions.permits 'read', container.message, auth.user
+        else if not auth.permits 'read', container.message, auth.user
           annotator.publish 'annotationDeleted', container.message
           drafts.remove container.message
 

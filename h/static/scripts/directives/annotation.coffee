@@ -113,12 +113,9 @@ AnnotationController = [
     ###
     this.revert = ->
       drafts.remove model
-      if @action is 'create'
-        annotator.publish 'annotationDeleted', model
-      else
-        this.render()
-        @action = 'view'
-        @editing = false
+      @action = 'view'
+      @editing = false
+      this.render()
 
     # Calculates the visual diff flags from the targets
     #

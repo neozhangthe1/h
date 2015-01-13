@@ -9,8 +9,7 @@
 # constructor for each endpoint eg. store.AnnotationResource() and
 # store.SearchResource().
 ###
-angular.module('h')
-.service('store', [
+angular.module('h').service('store', [
   '$document', '$http', '$resource',
   ($document,   $http,   $resource) ->
 
