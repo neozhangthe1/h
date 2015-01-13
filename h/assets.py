@@ -15,8 +15,11 @@ class BrowserifyFilter(ExternalTool):
 
     def input(self, in_, out, source_path, **kwargs):
         args = [self.binary or 'browserify']
-        args.append('--transform=coffeeify')
         args.append('--extension=.coffee')
+
+        if self.env.debug is True:
+            args.append('--debug')
+
         args.append('-')
         with working_directory(filename=source_path):
             self.subprocess(args, out, in_)
