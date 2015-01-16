@@ -4,46 +4,39 @@
 #
 # @description
 # The 'Auth' service exposes the currently logged in user for other components,
-# configures the Annotator.Auth plugin according to the login/logout events
+# Requests/forgets token according to the login/logout events
 # and provides a method for permitting a certain operation for a user with a
 # given annotation
 ###
 class Auth
 
   this.$inject = ['$location', '$rootScope',
-                  'annotator', 'documentHelpers', 'identity']
+                  'annotator', 'identity', 'token']
   constructor:   ( $location,   $rootScope,
-                   annotator,   documentHelpers,   identity) ->
+                   annotator,   identity,   token) ->
     {plugins} = annotator
     _checkingToken = false
     @user = undefined
 
     # Fired when the identity-service successfully requests authentication.
-    # Sets up the Annotator.Auth plugin instance and the auth.user property.
-    # It sets a flag between that time period to indicate that the token is
-    # being checked.
+    # Sets the auth.user property and a flag between that time period to
+    # indicate that the token is being checked.
     onlogin = (assertion) =>
       _checkingToken = true
 
       # Configure the Auth plugin with the issued assertion as refresh token.
-      annotator.addPlugin 'Auth',
-        tokenUrl: documentHelpers.absoluteURI(
-          "/api/token?assertion=#{assertion}")
+      token.setTokenUrl assertion
 
       # Set the user from the token.
-      plugins.Auth.withToken (token) =>
+      token.getToken (token) =>
         _checkingToken = false
         @user = token.userId
         $rootScope.$apply()
 
     # Fired when the identity-service forgets authentication.
-    # Destroys the Annotator.Auth plugin instance and sets
-    # the user to null.
+    # Sets the user to null.
     onlogout = =>
-      plugins.Auth?.element.removeData('annotator:headers')
-      plugins.Auth?.destroy()
-      delete plugins.Auth
-
+      token.forgetToken()
       @user = null
       _checkingToken = false
 
