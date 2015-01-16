@@ -30,15 +30,15 @@
 ###
 identityProvider = ->
   checkAuthentication: ['$q', ($q) ->
-    $q.reject 'Not implemented idenityProvider#checkAuthentication.'
+    $q.reject 'Not implemented identityProvider#checkAuthentication.'
   ]
 
   forgetAuthentication: ['$q', ($q) ->
-    $q.reject 'Not implemented idenityProvider#forgetAuthentication.'
+    $q.reject 'Not implemented identityProvider#forgetAuthentication.'
   ]
 
   requestAuthentication: ['$q', ($q) ->
-    $q.reject 'Not implemented idenityProvider#requestAuthentication.'
+    $q.reject 'Not implemented identityProvider#requestAuthentication.'
   ]
 
   ###*
