@@ -115,7 +115,7 @@ AnnotationController = [
     this.revert = ->
       drafts.remove model
       if @action is 'create'
-        $rootScope.$emit('annotationDeleted', annotation)
+        $rootScope.$emit('annotationDeleted', model)
       else
         this.render()
         @action = 'view'
