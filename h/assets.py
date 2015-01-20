@@ -1,24 +1,46 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 import re
+import io
 
 from deform.field import Field
-from webassets.filter import (ExternalTool, register_filter)
+from webassets.filter import (ExternalTool, register_filter, option)
+from webassets.filter.coffeescript import *
 from webassets.utils import working_directory
 import pyramid
 
 
 class BrowserifyFilter(ExternalTool):
     name = 'browserify'
-    options = {'binary': 'BROWSERIFY_BIN'}
+    options = {
+        'binary': 'BROWSERIFY_BIN',
+        'coffee_binary': 'COFFEE_BIN',
+    }
     max_debug_level = None
 
+    def __init__(self, **kw):
+        super(ExternalTool, self).__init__(**kw)
+        # self.coffee = CoffeeScript(coffee_bin=option(self.coffee_binary,))
+
     def input(self, in_, out, source_path, **kwargs):
-        args = [self.binary or 'browserify']
+        # We need to convert the coffeescript before it's piped
+        if source_path.endswith('.coffee'):
+            proxy = io.StringIO()
+            # self.coffee.output(in_, proxy, **kwargs)
+            # in_ = proxy
+            args = []
+            args.append(self.coffee_binary or 'coffee')
+            args.extend(('--compile', '--print', '--stdio'))
+            self.subprocess(args, proxy, in_)
+            proxy.seek(0)
+            in_ = proxy
+
+        args = []
+        args.append(self.binary or 'browserify')
         args.append('--extension=.coffee')
 
-        if self.get_config('debug') is True:
-            args.append('--debug')
+        # if self.get_config('debug') is True:
+        #     args.append('--debug')
 
         args.append('-')
         with working_directory(filename=source_path):

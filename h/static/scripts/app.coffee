@@ -1,3 +1,11 @@
+angular = require('./vendor/angular')
+
+# Angular dependencies
+require('./vendor/angular-animate')
+require('./vendor/angular-sanitize')
+require('./vendor/angular-route')
+require('./vendor/ng-tags-input')
+
 imports = [
   'ngAnimate'
   'ngRoute'

@@ -206,35 +206,48 @@ app:
     - app_js
     - helpers
 
+# app_js:
+#   output: scripts/app.min.js
+#   contents:
+#     - jschannel
+#     - jwz
+#     - momentjs
+#     - pagedown
+#     - autofill
+#     - unorm
+#     - uuid
+#     - angular_tags_input
+#     - gettext
+#     - h:static/scripts/vendor/katex/katex.js
+#     - annotator
+#     - annotator_auth
+#     - annotator_bridge
+#     - annotator_discovery
+#     - annotator_document
+#     - annotator_permissions
+#     - annotator_store
+#     - annotator_threading
+#     - filters: uglifyjs
+#       contents:
+#         - filters: coffeescript
+#           output: scripts/app.js
+#           contents:
+#             - h:static/scripts/app.coffee
+#             - h:static/scripts/controllers.coffee
+#             - h:static/scripts/directives.coffee
+#             - h:static/scripts/directives/*.coffee
+#             - h:static/scripts/filters.coffee
+#             - h:static/scripts/searchfilters.coffee
+#             - h:static/scripts/services.coffee
+#             - h:static/scripts/*-service.coffee
+#             - h:static/scripts/streamsearch.coffee
+
 app_js:
   output: scripts/app.min.js
-  contents:
-    - jschannel
-    - jwz
-    - momentjs
-    - pagedown
-    - autofill
-    - url
-    - unorm
-    - uuid
-    - angular_tags_input
-    - h:static/scripts/vendor/katex/katex.js
-    - annotator
-    - annotator_plugins_app
-    - filters: uglifyjs
-      contents:
-        - filters: coffeescript
-          output: scripts/app.js
-          contents:
-            - h:static/scripts/app.coffee
-            - h:static/scripts/controllers.coffee
-            - h:static/scripts/directives.coffee
-            - h:static/scripts/directives/*.coffee
-            - h:static/scripts/filters.coffee
-            - h:static/scripts/searchfilters.coffee
-            - h:static/scripts/services.coffee
-            - h:static/scripts/*-service.coffee
-            - h:static/scripts/streamsearch.coffee
+  filters:
+    - browserify
+  contents: h:static/scripts/app.coffee
+  depends: h:static/scripts/**/*
 
 app_css:
     filters: cleancss, cssrewrite
@@ -279,11 +292,8 @@ account:
       filters: uglifyjs
       contents:
         - output: scripts/account.js
-          filters: coffeescript
-          contents:
-            - h:static/scripts/account/account.coffee
-            - h:static/scripts/account/*-controller.coffee
-            - h:static/scripts/account/*-service.coffee
+          filters: browserify
+          contents: h:static/scripts/account/account.coffee
 
 
 helpers:
@@ -292,12 +302,9 @@ helpers:
     - angular_bootstrap
     - filters: uglifyjs
       contents:
-        - filters: coffeescript
+        - filters: browserify
           output: scripts/helpers.js
-          contents:
-            - h:static/scripts/helpers/helpers.coffee
-            - h:static/scripts/helpers/*-helpers.coffee
-            - h:static/scripts/helpers/*-service.coffee
+          contents: h:static/scripts/helpers/helpers.coffee
 
 
 session:
@@ -306,11 +313,9 @@ session:
     - contents:
       - filters: uglifyjs
         contents:
-          - filters: coffeescript
+          - filters: browserify
             output: scripts/session.js
-            contents:
-              - h:static/scripts/session/session.coffee
-              - h:static/scripts/session/*-service.coffee
+            contents: h:static/scripts/session/session.coffee
 
 
 # The inject bundle is intended to be loaded into pages for bootstrapping
@@ -322,37 +327,11 @@ inject:
     - inject_css
     - inject_js
 
-# inject_js:
-#   output: scripts/hypothesis.min.js
-#   contents:
-#     - jquery
-#     - jquery_scrollintoview
-#     - jschannel
-#     - gettext
-#     - annotator
-#     - annotator_bridge
-#     - annotator_bucket_bar
-#     - annotator_document
-#     - annotator_fuzzytextanchors
-#     - annotator_textrange
-#     - annotator_textposition
-#     - annotator_textquote
-#     - annotator_texthighlights
-#     - annotator_pdf
-#     - annotator_toolbar
-#     - filters: uglifyjs
-#       contents:
-#         - filters: coffeescript
-#           output: scripts/hypothesis.js
-#           contents:
-#             - h:static/scripts/guest.coffee
-#             - h:static/scripts/host.coffee
-#         - h:static/bootstrap.js
-
 inject_js:
+  output: scripts/hypothesis.min.js
   contents:
   - jquery
-  - output: scripts/hypothesis.min.js
+  - output: scripts/hypothesis.js
     filters: browserify
     contents: h:static/bootstrap.js
     depends:
