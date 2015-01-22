@@ -3,17 +3,26 @@ Annotator = require('annotator')
 Channel = require('./vendor/jschannel')
 
 # Include Annotator Plugins
-require('./vendor/annotator.pdf')
 require('./vendor/annotator.document')
-require('./vendor/annotator.textanchors')
-require('./vendor/annotator.fuzzytextanchors')
-require('./vendor/annotator.textrange')
-require('./vendor/annotator.textposition')
-require('./vendor/annotator.textquote')
-require('./vendor/annotator.texthighlights')
-require('./plugin/bridge')
-require('./plugin/toolbar')
-require('./plugin/bucket-bar')
+require('./annotator/plugin/bridge')
+require('./annotator/plugin/toolbar')
+require('./annotator/plugin/bucket-bar')
+require('./annotator/plugin/texthighlights')
+require('./annotator/plugin/textselection')
+require('./annotator/plugin/fragmentselector')
+
+# Anchoring
+require('./annotator/plugin/enhancedanchoring')
+require('./annotator/plugin/domtextmapper')
+require('./annotator/plugin/textposition')
+require('./annotator/plugin/textquote')
+require('./annotator/plugin/textrange')
+
+# PDF
+require('./annotator/plugin/pdf')
+
+# Fuzzy
+require('./annotator/plugin/fuzzytextanchors')
 
 
 module.exports = class Annotator.Guest extends Annotator

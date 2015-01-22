@@ -1,3 +1,5 @@
+DomTextMatcher = require('../../vendor/dom_text_matcher')
+
 # Annotator plugin for fuzzy text matching
 class Annotator.Plugin.FuzzyTextAnchors extends Annotator.Plugin
 

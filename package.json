@@ -46,22 +46,15 @@
   "browserify-shim": {
     "jquery": "global:jQuery",
     "annotator": {
-      "exports": "this.Annotator",
+      "exports": "Annotator",
       "depends": [
         "jquery",
         "./h/static/scripts/vendor/jquery.scrollintoview.js"
       ]
     },
+    "./h/static/scripts/vendor/angular.js": "global:angular",
     "./h/static/scripts/vendor/jschannel.js": "Channel",
-    "./h/static/scripts/vendor/annotator.pdf.js": {
-      "depends": [
-        "./h/static/scripts/vendor/page_text_mapper_core.js"
-      ]
-    },
-    "./h/static/scripts/vendor/annotator.fuzzytextanchors.js": {
-      "depends": [
-        "./h/static/scripts/vendor/dom_text_matcher.js"
-      ]
-    }
+    "./h/static/scripts/vendor/page_text_mapper_core.js": "PageTextMapperCore",
+    "./h/static/scripts/vendor/dom_text_matcher.js": "DomTextMatcher"
   }
 }

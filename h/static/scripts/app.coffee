@@ -65,4 +65,5 @@ configure = [
     $sceDelegateProvider.resourceUrlWhitelist ['self', basePattern]
 ]
 
+debugger
 angular.module('h', imports, configure)

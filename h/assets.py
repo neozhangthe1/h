@@ -10,44 +10,40 @@ from webassets.utils import working_directory
 import pyramid
 
 
-class BrowserifyFilter(ExternalTool):
+class Browserify(ExternalTool):
     name = 'browserify'
     options = {
-        'binary': 'BROWSERIFY_BIN',
-        'coffee_binary': 'COFFEE_BIN',
+        'browserify_bin': ('binary', 'BROWSERIFY_BIN'),
+        'coffee_bin': (False, 'COFFEE_BIN'),
+        'no_bare': (False, 'COFFEE_NO_BARE'),
     }
     max_debug_level = None
 
-    def __init__(self, **kw):
-        super(ExternalTool, self).__init__(**kw)
-        # self.coffee = CoffeeScript(coffee_bin=option(self.coffee_binary,))
+    def __init__(self, **kwargs):
+        super(Browserify, self).__init__(**kwargs)
+        self.coffee = CoffeeScript(binary=self.coffee_bin,
+                                   no_bare=self.no_bare)
 
     def input(self, in_, out, source_path, **kwargs):
         # We need to convert the coffeescript before it's piped
         if source_path.endswith('.coffee'):
-            proxy = io.StringIO()
-            # self.coffee.output(in_, proxy, **kwargs)
-            # in_ = proxy
-            args = []
-            args.append(self.coffee_binary or 'coffee')
-            args.extend(('--compile', '--print', '--stdio'))
-            self.subprocess(args, proxy, in_)
-            proxy.seek(0)
-            in_ = proxy
+            temp = io.StringIO()
+            self.coffee.output(in_, temp, **kwargs)
+            temp.seek(0)
+            in_ = temp
 
-        args = []
-        args.append(self.binary or 'browserify')
-        args.append('--extension=.coffee')
-
+        binary = self.browserify_bin or 'browserify'
+        argv = [binary]
+        argv.append('--extension=.coffee')
         # if self.get_config('debug') is True:
-        #     args.append('--debug')
+        #     argv.append('--debug')
+        argv.append('-')
 
-        args.append('-')
         with working_directory(filename=source_path):
-            self.subprocess(args, out, in_)
+            self.subprocess(argv, out, in_)
 
 
-register_filter(BrowserifyFilter)
+register_filter(Browserify)
 
 
 class WebassetsResourceRegistry(object):

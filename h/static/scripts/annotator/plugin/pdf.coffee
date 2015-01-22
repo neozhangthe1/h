@@ -1,3 +1,5 @@
+PageTextMapperCore = require('../../vendor/page_text_mapper_core')
+
 detectedPDFjsVersion = PDFJS?.version.split(".").map parseFloat
 
 # Compare two versions, given as arrays of numbers
